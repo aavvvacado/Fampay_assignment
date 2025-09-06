@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -69,6 +70,11 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
       final ctaUrl = ctaData['url'];
       if (ctaUrl != null && ctaUrl.isNotEmpty) {
         UrlLauncherService.launchURL(ctaUrl, context: context);
+      } else {
+        // Fallback to card URL if CTA doesn't have its own URL
+        if (widget.card.url != null && widget.card.url!.isNotEmpty) {
+          UrlLauncherService.launchURL(widget.card.url, context: context);
+        }
       }
     }
   }
@@ -121,25 +127,48 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
             borderRadius: BorderRadius.circular(16),
             child: Stack(
               children: [
-                // Background Image
-                if (widget.card.bgImage?.imageUrl != null)
-                  Positioned.fill(
-                    child: CachedNetworkImage(
-                      imageUrl: widget.card.bgImage!.imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.indigo[800],
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.indigo[800],
-                      ),
-                    ),
-                  ),
+                 // Background Image
+                 if (widget.card.bgImage?.imageSource != null)
+                   Positioned.fill(
+                     child: widget.card.bgImage!.imageType == 'asset'
+                         ? Image.asset(
+                             widget.card.bgImage!.imageSource!,
+                             fit: BoxFit.cover,
+                             errorBuilder: (context, error, stackTrace) =>
+                                 Container(color: Colors.indigo[800]),
+                           )
+                         : CachedNetworkImage(
+                             imageUrl: widget.card.bgImage!.imageSource!,
+                             fit: BoxFit.cover,
+                             placeholder: (context, url) => Container(
+                               color: Colors.indigo[800],
+                             ),
+                             errorWidget: (context, url, error) => Container(
+                               color: Colors.indigo[800],
+                             ),
+                           ),
+                   ),
 
-                // Background Color fallback
-                if (widget.card.bgImage?.imageUrl == null)
+                // Background Color/Gradient fallback
+                if (widget.card.bgImage?.imageSource == null)
                   Container(
-                    color: Colors.indigo[800],
+                    decoration: BoxDecoration(
+                      color: widget.card.bgColor != null
+                          ? Color(int.parse(widget.card.bgColor!.replaceAll('#', '0xff')))
+                          : Colors.indigo[800],
+                      gradient: widget.card.bgGradient != null
+                          ? LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: widget.card.bgGradient!.colors
+                                  .map((color) => Color(int.parse(color.replaceAll('#', '0xff'))))
+                                  .toList(),
+                              transform: GradientRotation(
+                                (widget.card.bgGradient!.angle ?? 0) * (3.14159 / 180),
+                              ),
+                            )
+                          : null,
+                    ),
                   ),
 
                 // Content
@@ -375,6 +404,7 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
       if (entity is Map<String, dynamic>) {
         String entityText = entity['text'] ?? '';
         String color = entity['color'] ?? '#ffffff';
+        String? entityUrl = entity['url'];
         double fontSize = (entity['font_size'] as num?)?.toDouble() ??
             (isSmallScreen ? 24.0 : (isTablet ? 32.0 : 28.0));
         String fontStyle = entity['font_style'] ?? 'normal';
@@ -398,18 +428,38 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
           decoration = TextDecoration.underline;
         }
 
-        spans.add(
-          TextSpan(
-            text: entityText,
-            style: TextStyle(
-              color: Color(int.parse(color.replaceAll('#', '0xff'))),
-              fontSize: responsiveFontSize,
-              fontWeight: fontWeight,
-              decoration: decoration,
-              fontFamily: fontFamily.isNotEmpty ? fontFamily : null,
+        // Create clickable span if URL is provided
+        if (entityUrl != null && entityUrl.isNotEmpty) {
+          spans.add(
+            TextSpan(
+              text: entityText,
+              style: TextStyle(
+                color: Color(int.parse(color.replaceAll('#', '0xff'))),
+                fontSize: responsiveFontSize,
+                fontWeight: fontWeight,
+                decoration: decoration,
+                fontFamily: fontFamily.isNotEmpty ? fontFamily : null,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  UrlLauncherService.launchURL(entityUrl, context: context);
+                },
             ),
-          ),
-        );
+          );
+        } else {
+          spans.add(
+            TextSpan(
+              text: entityText,
+              style: TextStyle(
+                color: Color(int.parse(color.replaceAll('#', '0xff'))),
+                fontSize: responsiveFontSize,
+                fontWeight: fontWeight,
+                decoration: decoration,
+                fontFamily: fontFamily.isNotEmpty ? fontFamily : null,
+              ),
+            ),
+          );
+        }
       }
     }
 

@@ -30,15 +30,22 @@ class HC6SmallCardArrow extends StatelessWidget {
       child: Row(
         children: [
           // Icon
-          if (card.icon?.imageUrl != null)
+          if (card.icon?.imageSource != null)
             Container(
               margin: EdgeInsets.only(right: isSmallScreen ? 12 : 16),
-              child: CachedNetworkImage(
-                imageUrl: card.icon!.imageUrl,
-                height: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
-                width: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
-                fit: BoxFit.contain,
-              ),
+              child: card.icon!.imageType == 'asset'
+                  ? Image.asset(
+                      card.icon!.imageSource!,
+                      height: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
+                      width: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
+                      fit: BoxFit.contain,
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: card.icon!.imageSource!,
+                      height: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
+                      width: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
+                      fit: BoxFit.contain,
+                    ),
             ),
           
           // Title with formatted text support

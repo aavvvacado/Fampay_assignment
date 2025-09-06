@@ -1,11 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fampay_assignment/core/models/card_model.dart';
 import 'package:flutter/material.dart';
+import '../../../core/services/url_launcher_service.dart';
 
 class HC1SmallDisplayCard extends StatelessWidget {
   final CardModel card;
   final double? height;
   const HC1SmallDisplayCard({super.key, required this.card, this.height});
+
+  void _handleCardTap(BuildContext context) {
+    if (card.url != null && card.url!.isNotEmpty) {
+      UrlLauncherService.launchURL(card.url, context: context);
+    }
+  }
 
   String _getDisplayTitle() {
     // First try to get text from formatted_title entities
@@ -58,29 +65,31 @@ class HC1SmallDisplayCard extends StatelessWidget {
     // Check if we're in a horizontal ListView (when height is provided)
     final isInHorizontalList = height != null;
 
-    return Container(
-      width: isInHorizontalList
-          ? (isSmallScreen ? 200 : (isTablet ? 280 : 240))
-          : null, // Fixed width for horizontal scrolling
-      height: height ?? 70, // Fixed height as per API (70px)
-      margin: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 12 : 16,
-        vertical: isSmallScreen ? 6 : 8,
-      ),
-      padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
-      decoration: BoxDecoration(
-        color: card.bgColor != null
-            ? Color(int.parse(card.bgColor!.replaceAll('#', '0xff')))
-            : Colors.orange,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return GestureDetector(
+      onTap: () => _handleCardTap(context),
+      child: Container(
+        width: isInHorizontalList
+            ? (isSmallScreen ? 200 : (isTablet ? 280 : 240))
+            : null, // Fixed width for horizontal scrolling
+        height: height ?? 70, // Fixed height as per API (70px)
+        margin: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 12 : 16,
+          vertical: isSmallScreen ? 6 : 8,
+        ),
+        padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+        decoration: BoxDecoration(
+          color: card.bgColor != null
+              ? Color(int.parse(card.bgColor!.replaceAll('#', '0xff')))
+              : Colors.orange,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
       child: Row(
         children: [
           // Profile Image/Icon
@@ -91,30 +100,45 @@ class HC1SmallDisplayCard extends StatelessWidget {
               shape: BoxShape.circle,
               color: Colors.white.withOpacity(0.2),
             ),
-            child: card.icon?.imageUrl != null
+            child: card.icon?.imageSource != null
                 ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: card.icon!.imageUrl!,
-                      width: isSmallScreen ? 24 : (isTablet ? 32 : 28),
-                      height: isSmallScreen ? 24 : (isTablet ? 32 : 28),
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.white.withOpacity(0.2),
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: isSmallScreen ? 16 : (isTablet ? 20 : 18),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.white.withOpacity(0.2),
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: isSmallScreen ? 16 : (isTablet ? 20 : 18),
-                        ),
-                      ),
-                    ),
+                    child: card.icon!.imageType == 'asset'
+                        ? Image.asset(
+                            card.icon!.imageSource!,
+                            width: isSmallScreen ? 24 : (isTablet ? 32 : 28),
+                            height: isSmallScreen ? 24 : (isTablet ? 32 : 28),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: Colors.white.withOpacity(0.2),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: isSmallScreen ? 16 : (isTablet ? 20 : 18),
+                              ),
+                            ),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: card.icon!.imageSource!,
+                            width: isSmallScreen ? 24 : (isTablet ? 32 : 28),
+                            height: isSmallScreen ? 24 : (isTablet ? 32 : 28),
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.white.withOpacity(0.2),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: isSmallScreen ? 16 : (isTablet ? 20 : 18),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.white.withOpacity(0.2),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: isSmallScreen ? 16 : (isTablet ? 20 : 18),
+                              ),
+                            ),
+                          ),
                   )
                 : Icon(
                     Icons.person,
@@ -160,6 +184,7 @@ class HC1SmallDisplayCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
