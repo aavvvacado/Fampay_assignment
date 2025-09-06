@@ -1,0 +1,65 @@
+name: fampay_assignment
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: ^3.5.4
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc:
+  equatable:
+  dio:
+  cached_network_image:
+  google_fonts:
+  flutter_html:
+  shimmer:
+  url_launcher:
+  intl:
+  animations:
+  flutter_staggered_grid_view:
+  cupertino_icons: ^1.0.8
+  wakelock_plus:
+  shared_preferences:
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  bloc_test:
+  mockito:
+  flutter_lints: ^4.0.0
+flutter:
+  uses-material-design: true
+  assets:
+  - assets/
+
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
