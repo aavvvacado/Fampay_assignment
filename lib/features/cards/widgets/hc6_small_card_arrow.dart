@@ -26,56 +26,58 @@ class HC6SmallCardArrow extends StatelessWidget {
             : Colors.orange[400],
         borderRadius: BorderRadius.circular(8),
       ),
-      child: SingleChildScrollView( // Made scrollable
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            // Icon - positioned to the left of text
-            if (card.icon?.imageUrl != null)
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                child: card.icon!.imageType == 'asset'
-                    ? Image.asset(
-                        card.icon!.imageUrl!,
-                        height: card.iconSize ?? 20,
-                        width: card.iconSize ?? 20,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const SizedBox(),
-                      )
-                    : CachedNetworkImage(
-                        imageUrl: card.icon!.imageUrl!,
-                        height: card.iconSize ?? 20,
-                        width: card.iconSize ?? 20,
-                        fit: BoxFit.contain,
-                        placeholder: (context, url) => const SizedBox(),
-                        errorWidget: (context, url, error) => const SizedBox(),
-                      ),
-              ),
-            
-            // Title with formatted text support
-            card.formattedTitle != null
-                ? _buildFormattedText(card.formattedTitle!, isSmallScreen, false)
-                : Text(
-                    card.title ?? "Small card",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+      child: Row(
+        children: [
+          // Icon - positioned to the left of text
+          if (card.icon?.imageUrl != null)
+            Container(
+              margin: const EdgeInsets.only(right: 16),
+              child: card.icon!.imageType == 'asset'
+                  ? Image.asset(
+                      card.icon!.imageUrl!,
+                      height: card.iconSize ?? 20,
+                      width: card.iconSize ?? 20,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox(),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: card.icon!.imageUrl!,
+                      height: card.iconSize ?? 20,
+                      width: card.iconSize ?? 20,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) => const SizedBox(),
+                      errorWidget: (context, url, error) => const SizedBox(),
                     ),
-                    overflow: TextOverflow.visible, // Allow text to overflow for scrolling
-                  ),
-            
-            const SizedBox(width: 8), // Space between text and arrow
-            
-            // Arrow icon - black color
-            const Icon(
-              Icons.arrow_forward_ios,
-              size: 18,
-              color: Colors.black, // Changed to black
             ),
-          ],
-        ),
+
+          // Scrollable text area expands to take remaining space
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: card.formattedTitle != null
+                  ? _buildFormattedText(card.formattedTitle!, isSmallScreen, false)
+                  : Text(
+                      card.title ?? "Small card",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.visible,
+                    ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Arrow icon - pinned to the far right
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 18,
+            color: Colors.black,
+          ),
+        ],
       ),
     );
   }
