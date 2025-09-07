@@ -2,6 +2,15 @@
 
 A Flutter application that displays contextual cards fetched from the FamPay API, implementing all required features including deeplink handling, card dismissal, pull-to-refresh, and responsive design.
 
+## 📹 Demo
+
+- App walkthrough video (HC1/HC3/HC5/HC6/HC9, pull-to-refresh, deeplinks, HC3 long-press actions):
+  - Google Drive link: <ADD_LINK_HERE>
+  - Backup GIF (short preview): `assets/demo/preview.gif`
+- APK for reviewers: `build/app/outputs/flutter-apk/app-release.apk`
+
+> Tip: If running locally, follow Setup below. The video demonstrates: loading → list render → deeplink taps → HC3 long-press (remind later / dismiss now) → relaunch behavior → pull-to-refresh → HC6 horizontal scroll → HC9 dynamic width.
+
 ## 🚀 Features Implemented
 
 ### ✅ Core Requirements
@@ -16,9 +25,9 @@ A Flutter application that displays contextual cards fetched from the FamPay API
 ### ✅ Card Types Supported
 - **HC1**: Small Display Cards with icons and text
 - **HC3**: Big Display Cards with background images and CTAs
-- **HC5**: Image Cards
-- **HC6**: Small Cards with Arrow
-- **HC9**: Dynamic Width Cards
+- **HC5**: Image Cards (dynamic height supported via group height)
+- **HC6**: Small Cards with Arrow (icon left, text center, arrow pinned right)
+- **HC9**: Dynamic Width Cards (width by aspect ratio, height by group)
 
 ### ✅ Advanced Features
 - **Formatted Text Support**: Rich text with entities, colors, fonts, and clickable URLs
@@ -96,7 +105,7 @@ lib/
 
 ### Card Interactions
 - **Tap**: Opens card URL or CTA URL
-- **Long Press (HC3)**: Shows action buttons with slide animation
+- **Long Press (HC3)**: Shows action buttons with slide animation (left-only slide; right edge fixed)
 - **Pull Down**: Refreshes all cards
 - **Swipe**: Horizontal scrolling for scrollable card groups
 
@@ -114,9 +123,9 @@ lib/
 
 ### Card Styling
 - **HC1**: Circular icons, colored backgrounds, clean typography
-- **HC3**: Full-screen images, gradient overlays, prominent CTAs
-- **HC5**: Image-focused with minimal text
-- **HC6**: Arrow indicators for navigation
+- **HC3**: Large icon/gradient, prominent CTA, Figma-aligned spacing
+- **HC5**: Image-focused with minimal text; dynamic height
+- **HC6**: Icon left, underlined text, black arrow pinned right
 - **HC9**: Dynamic width based on image aspect ratio
 
 ## 🔧 API Integration
@@ -157,13 +166,17 @@ GET https://polyjuice.kong.fampay.co/mock/famapp/feed/home_section/?slugs=famx-p
 - **Memory Management**: Proper disposal of controllers
 - **State Persistence**: Efficient local storage
 
-## 🚀 Future Enhancements
+## 🚀 Submission
 
-- **Offline Support**: Cache cards for offline viewing
-- **Animations**: More sophisticated card transitions
-- **Theming**: Dark/light mode support
-- **Accessibility**: Screen reader support
-- **Analytics**: User interaction tracking
+- **Repository**: Clean commit history and README with setup instructions
+- **APK**: Include `app-release.apk` inside the repo under `build/app/outputs/flutter-apk/`
+- **Recordings**: Add a short screen recording (or the Demo link above)
+- **What reviewers will see**:
+  - API-only rendering (no hardcoded user-facing strings)
+  - Deeplinks on cards/CTAs/entities
+  - HC3 long-press actions with persistence
+  - Pull-to-refresh, loading/error/empty states
+  - HC9 dynamic width; HC5 dynamic height; HC6 arrow pinned right
 
 ## 📝 Code Quality
 
