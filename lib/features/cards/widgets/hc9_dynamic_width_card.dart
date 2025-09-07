@@ -1,12 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fampay_assignment/core/models/card_model.dart';
 import 'package:flutter/material.dart';
+import '../../../core/services/url_launcher_service.dart';
 
 class HC9DynamicWidthCard extends StatelessWidget {
   final CardModel card;
   final double? height;
 
   const HC9DynamicWidthCard({super.key, required this.card, this.height});
+
+  void _handleCardTap(BuildContext context) {
+    UrlLauncherService.launchURL(card.url, context: context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +24,16 @@ class HC9DynamicWidthCard extends StatelessWidget {
     final aspectRatio = card.bgImage?.aspectRatio ?? 1.0;
     final dynamicWidth = cardHeight * aspectRatio;
 
-    return Container(
-      width: dynamicWidth,
-      height: cardHeight,
-      margin: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 12 : 16,
-        vertical: 0, // Remove vertical margin to eliminate space
-      ),
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () => _handleCardTap(context),
+      child: Container(
+        width: dynamicWidth,
+        height: cardHeight,
+        margin: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 12 : 16,
+          vertical: 0, // Remove vertical margin to eliminate space
+        ),
+        decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -39,6 +46,7 @@ class HC9DynamicWidthCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: _buildBackground(),
+      ),
       ),
     );
   }

@@ -1,12 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fampay_assignment/core/models/card_model.dart';
 import 'package:flutter/material.dart';
+import '../../../core/services/url_launcher_service.dart';
 
 class HC5ImageCard extends StatelessWidget {
   final CardModel card;
   final double? height;
   
   const HC5ImageCard({super.key, required this.card, this.height});
+
+  void _handleCardTap(BuildContext context) {
+    UrlLauncherService.launchURL(card.url, context: context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +23,14 @@ class HC5ImageCard extends StatelessWidget {
     final cardHeight = height ?? (isSmallScreen ? 140 : (isTablet ? 200 : 160));
     final imageHeight = cardHeight - 60; // Reserve space for text (title + description)
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 12 : 16,
-        vertical: 0, // Remove vertical margin to eliminate space
-      ),
-      child: Column(
+    return GestureDetector(
+      onTap: () => _handleCardTap(context),
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 12 : 16,
+          vertical: 0, // Remove vertical margin to eliminate space
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (card.bgImage?.imageUrl != null)
@@ -50,6 +57,7 @@ class HC5ImageCard extends StatelessWidget {
               child: Text(card.description!),
             ),
         ],
+      ),
       ),
     );
   }

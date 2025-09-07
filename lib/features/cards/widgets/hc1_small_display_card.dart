@@ -1,41 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fampay_assignment/core/models/card_model.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import the url_launcher package
+import '../../../core/services/url_launcher_service.dart';
 
 class HC1SmallDisplayCard extends StatelessWidget {
   final CardModel card;
   final double? height;
   const HC1SmallDisplayCard({super.key, required this.card, this.height});
 
-  void _handleCardTap(BuildContext context) async {
-    final url = card.url;
-    if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No URL provided for this card.')),
-      );
-      return;
-    }
-
-    // Attempt to parse the URL string into a Uri object.
-    final uri = Uri.tryParse(url);
-    if (uri == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid URL format.')),
-      );
-      return;
-    }
-
-    // Check if the device has an app that can handle this URI.
-    if (await canLaunchUrl(uri)) {
-      // If a handler is found, attempt to launch the URI.
-      await launchUrl(uri);
-    } else {
-      // If no handler is found, show a user-friendly message.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not launch the URL.')),
-      );
-    }
+  void _handleCardTap(BuildContext context) {
+    UrlLauncherService.launchURL(card.url, context: context);
   }
 
   String _getDisplayTitle() {
@@ -53,7 +27,7 @@ class HC1SmallDisplayCard extends StatelessWidget {
     if (card.title != null && card.title!.trim().isNotEmpty) {
       return card.title!.trim();
     }
-    return "Small display card";
+    return "";
   }
 
   String _getDisplayDescription() {
@@ -71,7 +45,7 @@ class HC1SmallDisplayCard extends StatelessWidget {
     if (card.description != null && card.description!.trim().isNotEmpty) {
       return card.description!.trim();
     }
-    return "Arya Stark";
+    return "";
   }
 
   TextDecoration? _getTextDecoration() {
@@ -133,7 +107,7 @@ class HC1SmallDisplayCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: card.bgColor != null
               ? Color(int.parse(card.bgColor!.replaceAll('#', '0xff')))
-              : Colors.orange,
+              : Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(

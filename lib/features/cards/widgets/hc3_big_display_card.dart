@@ -100,6 +100,74 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
     _handleLongPress(); // Close the action panel
   }
 
+  Widget _buildImageWidget() {
+// First try icon field
+
+    if (widget.card.icon?.imageSource != null) {
+      return widget.card.icon!.imageType == 'asset'
+          ? Image.asset(
+              widget.card.icon!.imageSource!,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.image,
+                size: 100,
+                color: Colors.white70,
+              ),
+            )
+          : CachedNetworkImage(
+              imageUrl: widget.card.icon!.imageSource!,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white70,
+                ),
+              ),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.image,
+                size: 100,
+                color: Colors.white70,
+              ),
+            );
+    }
+
+// If icon is not available, try bgImage field
+
+    if (widget.card.bgImage?.imageUrl != null) {
+      return widget.card.bgImage!.imageType == 'asset'
+          ? Image.asset(
+              widget.card.bgImage!.imageUrl!,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.image,
+                size: 100,
+                color: Colors.white70,
+              ),
+            )
+          : CachedNetworkImage(
+              imageUrl: widget.card.bgImage!.imageUrl!,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white70,
+                ),
+              ),
+              errorWidget: (context, url, error) => const Icon(
+                Icons.image,
+                size: 100,
+                color: Colors.white70,
+              ),
+            );
+    }
+
+// Fallback if no image is available
+
+    return const Icon(
+      Icons.image,
+      size: 100,
+      color: Colors.white70,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -229,7 +297,9 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
               decoration: BoxDecoration(
                 color:
                     const Color(0xFF454AA6), // Using the specified card color
+
                 borderRadius: BorderRadius.circular(16),
+
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -262,138 +332,110 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
                         ),
                       ),
 
-// Complete redesign with proper Figma-like layout
+// Fixed layout using Stack to prevent RenderFlex overflow
 
                     Padding(
-                      padding: const EdgeInsets.all(28),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: const EdgeInsets.all(20),
+                      child: Stack(
                         children: [
-// BIG Icon at top-left - very prominent
-
-                          if (widget.card.bgImage?.imageUrl != null)
-                            Container(
-                              width: widget.card.bgImage?.width != null
-                                  ? widget.card.bgImage!.width!
-                                  : 150,
-                              height: widget.card.bgImage?.height != null
-                                  ? widget.card.bgImage!.height!
-                                  : 150,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: widget.card.bgImage!.imageType == 'asset'
-                                  ? Image.asset(
-                                      widget.card.bgImage!.imageUrl!,
-                                      fit: BoxFit.contain,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const SizedBox(),
-                                    )
-                                  : CachedNetworkImage(
-                                      imageUrl: widget.card.bgImage!.imageUrl!,
-                                      fit: BoxFit.contain,
-                                      placeholder: (context, url) =>
-                                          const SizedBox(),
-                                      errorWidget: (context, url, error) =>
-                                          const SizedBox(),
-                                    ),
-                            ),
-
-                          if (widget.card.formattedTitle != null)
-                            _buildFormattedText(widget.card.formattedTitle!,
-                                isSmallScreen, false)
-                          else if (widget.card.title != null)
-                            Text(
-                              widget.card.title!,
-                              style: const TextStyle(
-                                fontSize: 36,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                height: 1.1,
-                              ),
-                            ),
-
-                          const SizedBox(height: 28),
-
-// Description - clear and readable
-
-                          if (widget.card.description != null &&
-                              widget.card.formattedTitle == null)
-                            Text(
-                              widget.card.description!,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white.withOpacity(0.9),
-                                height: 1.4,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-
-                          const Spacer(),
-
-// Small left-aligned CTA Button
-
-                          if (widget.card.cta != null &&
-                              widget.card.cta!.isNotEmpty)
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                width: 160,
-                                height: 48,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: (widget.card.cta!.first
-                                                    as Map<String, dynamic>)[
-                                                'bg_color'] !=
-                                            null
-                                        ? Color(int.parse(
-                                            (widget.card.cta!.first as Map<
-                                                    String,
-                                                    dynamic>)['bg_color']
-                                                .replaceAll('#', '0xff')))
-                                        : Colors.black,
-                                    foregroundColor: (widget.card.cta!.first
-                                                    as Map<String, dynamic>)[
-                                                'text_color'] !=
-                                            null
-                                        ? Color(int.parse(
-                                            (widget.card.cta!.first as Map<
-                                                    String,
-                                                    dynamic>)['text_color']
-                                                .replaceAll('#', '0xff')))
-                                        : Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 24,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        (widget.card.cta!.first as Map<String,
-                                                    dynamic>)['is_circular'] ==
-                                                true
-                                            ? 22
-                                            : 8,
-                                      ),
-                                    ),
-                                    elevation: 3,
-                                    shadowColor: Colors.black.withOpacity(0.2),
-                                  ),
-                                  onPressed: _handleCtaTap,
-                                  child: Text(
-                                    (widget.card.cta!.first
-                                            as Map<String, dynamic>)['text'] ??
-                                        'Action',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
+                          // Background image / icon
+                          if (widget.card.icon?.imageSource != null ||
+                              widget.card.bgImage?.imageUrl != null)
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: SizedBox(
+                                  width: 340,
+                                  height: 480,
+                                  child: _buildImageWidget(),
                                 ),
                               ),
                             ),
+
+                          // Foreground content in a Column
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 150),
+
+                              // Title
+                              if (widget.card.formattedTitle != null)
+                                _buildFormattedText(widget.card.formattedTitle!,
+                                    isSmallScreen, false)
+                              else if (widget.card.title != null)
+                                Text(
+                                  widget.card.title!,
+                                ),
+                              // Description
+                              if (widget.card.description != null)
+                                Text(
+                                  widget.card.description!,
+                                ),
+
+                              const Spacer(),
+
+                              // Action Button
+                              if (widget.card.cta != null &&
+                                  widget.card.cta!.isNotEmpty)
+                                SizedBox(
+                                  width: 140,
+                                  height: 44,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: (widget.card.cta!.first
+                                                      as Map<String, dynamic>)[
+                                                  'bg_color'] !=
+                                              null
+                                          ? Color(int.parse(
+                                              (widget.card.cta!.first as Map<
+                                                      String,
+                                                      dynamic>)['bg_color']
+                                                  .replaceAll('#', '0xff')))
+                                          : Colors.black,
+                                      foregroundColor: (widget.card.cta!.first
+                                                      as Map<String, dynamic>)[
+                                                  'text_color'] !=
+                                              null
+                                          ? Color(int.parse(
+                                              (widget.card.cta!.first as Map<
+                                                      String,
+                                                      dynamic>)['text_color']
+                                                  .replaceAll('#', '0xff')))
+                                          : Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 20),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          (widget.card.cta!.first as Map<String,
+                                                          dynamic>)[
+                                                      'is_circular'] ==
+                                                  true
+                                              ? 22
+                                              : 8,
+                                        ),
+                                      ),
+                                      elevation: 2,
+                                      shadowColor:
+                                          Colors.black.withOpacity(0.2),
+                                    ),
+                                    onPressed: _handleCtaTap,
+                                    child: Text(
+                                      (widget.card.cta!.first as Map<String,
+                                              dynamic>)['text'] ??
+                                          'Action',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.3,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -411,7 +453,7 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
         formattedText.text,
         textAlign: TextAlign.left,
         style: TextStyle(
-          fontSize: isSmallScreen ? 28 : (isTablet ? 36 : 32),
+          fontSize: isSmallScreen ? 28 : (isTablet ? 32 : 30),
           fontWeight: FontWeight.bold,
           color: Colors.white,
           height: 1.2,
@@ -441,7 +483,7 @@ class _HC3BigDisplayCardState extends State<HC3BigDisplayCard>
         String? entityUrl = entity['url'];
 
         double fontSize = (entity['font_size'] as num?)?.toDouble() ??
-            (isSmallScreen ? 24.0 : (isTablet ? 32.0 : 28.0));
+            (isSmallScreen ? 24.0 : (isTablet ? 30.0 : 28.0));
 
         String fontStyle = entity['font_style'] ?? 'normal';
 

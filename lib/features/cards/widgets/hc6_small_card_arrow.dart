@@ -2,25 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/models/card_model.dart';
 import '../../../core/models/formatted_text.dart';
+import '../../../core/services/url_launcher_service.dart';
 
 class HC6SmallCardArrow extends StatelessWidget {
   final CardModel card;
 
   const HC6SmallCardArrow({super.key, required this.card});
 
+  void _handleCardTap(BuildContext context) {
+    UrlLauncherService.launchURL(card.url, context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 400;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
-      padding: const EdgeInsets.all(20), // Same padding as other cards
-      height: 70, // Increased height
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () => _handleCardTap(context),
+      child: Container(
+        margin: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+        padding: const EdgeInsets.all(20), // Same padding as other cards
+        height: 70, // Increased height
+        decoration: BoxDecoration(
         color: card.bgColor != null
             ? Color(int.parse(card.bgColor!.replaceAll('#', '0xff')))
             : Colors.orange[400],
@@ -78,6 +85,7 @@ class HC6SmallCardArrow extends StatelessWidget {
             color: Colors.black,
           ),
         ],
+      ),
       ),
     );
   }
