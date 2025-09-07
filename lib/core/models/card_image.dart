@@ -3,12 +3,16 @@ class CardImage {
   final String? assetType;
   final String imageType;
   final double? aspectRatio;
+  final double? width;
+  final double? height;
 
   CardImage({
     this.imageUrl,
     this.assetType,
     required this.imageType,
     this.aspectRatio,
+    this.width,
+    this.height,
   });
 
   factory CardImage.fromJson(Map<String, dynamic> json) {
@@ -17,6 +21,8 @@ class CardImage {
       assetType: json['asset_type'],
       imageType: json['image_type'] ?? 'external',
       aspectRatio: (json['aspect_ratio'] as num?)?.toDouble(),
+      width: (json['width'] as num?)?.toDouble(),
+      height: (json['height'] as num?)?.toDouble(),
     );
   }
 

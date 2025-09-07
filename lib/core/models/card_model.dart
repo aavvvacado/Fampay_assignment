@@ -28,7 +28,7 @@ class CardModel {
   final bool isDisabled;
   final bool isShareable;
   final bool isInternal;
-  
+
   // Additional properties from API
   final String? cardType;
   final int? level;

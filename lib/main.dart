@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FamPay Contextual Cards',
+      title: 'FamPay Assignment',
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
         create: (_) => CardsBloc(repository)..add(FetchCardsEvent()),

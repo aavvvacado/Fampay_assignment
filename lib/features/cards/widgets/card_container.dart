@@ -82,14 +82,20 @@ class CardContainer extends StatelessWidget {
                   itemCount: group.cards.length,
                   itemBuilder: (context, index) {
                     if (index >= group.cards.length) return const SizedBox.shrink();
-                    return hc5.HC5ImageCard(card: group.cards[index]);
+                    return hc5.HC5ImageCard(
+                      card: group.cards[index],
+                      height: group.height ?? 200,
+                    );
                   },
                 ),
               );
             } else {
               return Column(
                 children: group.cards
-                    .map((card) => hc5.HC5ImageCard(card: card))
+                    .map((card) => hc5.HC5ImageCard(
+                      card: card,
+                      height: group.height ?? 200,
+                    ))
                     .toList(),
               );
             }
@@ -98,25 +104,8 @@ class CardContainer extends StatelessWidget {
             if (group.cards.isEmpty) {
               return const SizedBox.shrink();
             }
-            if (group.isScrollable) {
-              return SizedBox(
-                height: group.height ?? 70,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: group.cards.length,
-                  itemBuilder: (context, index) {
-                    if (index >= group.cards.length) return const SizedBox.shrink();
-                    return hc6.HC6SmallCardArrow(card: group.cards[index]);
-                  },
-                ),
-              );
-            } else {
-              return Column(
-                children: group.cards
-                    .map((card) => hc6.HC6SmallCardArrow(card: card))
-                    .toList(),
-              );
-            }
+            // Always use single card display for proper alignment
+            return hc6.HC6SmallCardArrow(card: group.cards.first);
 
           case "HC9":
             if (group.cards.isEmpty) {

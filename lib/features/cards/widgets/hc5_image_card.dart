@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 class HC5ImageCard extends StatelessWidget {
   final CardModel card;
-  const HC5ImageCard({super.key, required this.card});
+  final double? height;
+  
+  const HC5ImageCard({super.key, required this.card, this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +14,14 @@ class HC5ImageCard extends StatelessWidget {
     final isSmallScreen = screenWidth < 400;
     final isTablet = screenWidth > 600;
 
+    // Calculate dynamic height
+    final cardHeight = height ?? (isSmallScreen ? 140 : (isTablet ? 200 : 160));
+    final imageHeight = cardHeight - 60; // Reserve space for text (title + description)
+
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: isSmallScreen ? 12 : 16,
-        vertical: isSmallScreen ? 6 : 8,
+        vertical: 0, // Remove vertical margin to eliminate space
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,7 +32,7 @@ class HC5ImageCard extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: card.bgImage!.imageUrl!,
                 width: double.infinity,
-                height: 160,
+                height: imageHeight, // Dynamic height
                 fit: BoxFit.cover,
               ),
             ),

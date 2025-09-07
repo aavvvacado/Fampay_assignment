@@ -12,64 +12,70 @@ class HC6SmallCardArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 400;
-    final isTablet = screenWidth > 600;
 
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 12 : 16,
-        vertical: isSmallScreen ? 6 : 8,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
       ),
-      padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-      height: isSmallScreen ? 50 : (isTablet ? 60 : 55),
+      padding: const EdgeInsets.all(20), // Same padding as other cards
+      height: 70, // Increased height
       decoration: BoxDecoration(
         color: card.bgColor != null
             ? Color(int.parse(card.bgColor!.replaceAll('#', '0xff')))
             : Colors.orange[400],
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        children: [
-          // Icon
-          if (card.icon?.imageSource != null)
-            Container(
-              margin: EdgeInsets.only(right: isSmallScreen ? 12 : 16),
-              child: card.icon!.imageType == 'asset'
-                  ? Image.asset(
-                      card.icon!.imageSource!,
-                      height: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
-                      width: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
-                      fit: BoxFit.contain,
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: card.icon!.imageSource!,
-                      height: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
-                      width: card.iconSize ?? (isSmallScreen ? 16 : (isTablet ? 20 : 18)),
-                      fit: BoxFit.contain,
-                    ),
-            ),
-          
-          // Title with formatted text support
-          Expanded(
-            child: card.formattedTitle != null
-                ? _buildFormattedText(card.formattedTitle!, isSmallScreen, isTablet)
+      child: SingleChildScrollView( // Made scrollable
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            // Icon - positioned to the left of text
+            if (card.icon?.imageUrl != null)
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                child: card.icon!.imageType == 'asset'
+                    ? Image.asset(
+                        card.icon!.imageUrl!,
+                        height: card.iconSize ?? 20,
+                        width: card.iconSize ?? 20,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const SizedBox(),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: card.icon!.imageUrl!,
+                        height: card.iconSize ?? 20,
+                        width: card.iconSize ?? 20,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => const SizedBox(),
+                        errorWidget: (context, url, error) => const SizedBox(),
+                      ),
+              ),
+            
+            // Title with formatted text support
+            card.formattedTitle != null
+                ? _buildFormattedText(card.formattedTitle!, isSmallScreen, false)
                 : Text(
                     card.title ?? "Small card",
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 14 : (isTablet ? 16 : 15),
+                    style: const TextStyle(
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
-                    overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.visible, // Allow text to overflow for scrolling
                   ),
-          ),
-          
-          // Arrow icon
-          Icon(
-            Icons.arrow_forward_ios,
-            size: isSmallScreen ? 16 : (isTablet ? 20 : 18),
-            color: Colors.white,
-          ),
-        ],
+            
+            const SizedBox(width: 8), // Space between text and arrow
+            
+            // Arrow icon - black color
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 18,
+              color: Colors.black, // Changed to black
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -78,12 +84,12 @@ class HC6SmallCardArrow extends StatelessWidget {
     if (formattedText.entities == null || formattedText.entities!.isEmpty) {
       return Text(
         formattedText.text,
-        style: TextStyle(
-          fontSize: isSmallScreen ? 14 : (isTablet ? 16 : 15),
+        style: const TextStyle(
+          fontSize: 15,
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.visible,
       );
     }
 
@@ -99,18 +105,9 @@ class HC6SmallCardArrow extends StatelessWidget {
       if (entity is Map<String, dynamic>) {
         String entityText = entity['text'] ?? '';
         String color = entity['color'] ?? '#ffffff';
-        double fontSize = (entity['font_size'] as num?)?.toDouble() ??
-            (isSmallScreen ? 14.0 : (isTablet ? 16.0 : 15.0));
+        double fontSize = (entity['font_size'] as num?)?.toDouble() ?? 15.0;
         String fontStyle = entity['font_style'] ?? 'normal';
         String fontFamily = entity['font_family'] ?? '';
-
-        // Apply responsive scaling to API font sizes
-        double responsiveFontSize = fontSize;
-        if (isSmallScreen) {
-          responsiveFontSize = fontSize * 0.8;
-        } else if (isTablet) {
-          responsiveFontSize = fontSize * 1.2;
-        }
 
         FontWeight fontWeight = FontWeight.normal;
         TextDecoration decoration = TextDecoration.none;
@@ -127,7 +124,7 @@ class HC6SmallCardArrow extends StatelessWidget {
             text: entityText,
             style: TextStyle(
               color: Color(int.parse(color.replaceAll('#', '0xff'))),
-              fontSize: responsiveFontSize,
+              fontSize: fontSize,
               fontWeight: fontWeight,
               decoration: decoration,
               fontFamily: fontFamily.isNotEmpty ? fontFamily : null,
@@ -140,13 +137,13 @@ class HC6SmallCardArrow extends StatelessWidget {
     return RichText(
       text: TextSpan(
         children: spans,
-        style: TextStyle(
-          fontSize: isSmallScreen ? 14 : (isTablet ? 16 : 15),
+        style: const TextStyle(
+          fontSize: 15,
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
       ),
-      overflow: TextOverflow.ellipsis,
+      overflow: TextOverflow.visible,
     );
   }
 }

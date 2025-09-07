@@ -24,7 +24,7 @@ class HC9DynamicWidthCard extends StatelessWidget {
       height: cardHeight,
       margin: EdgeInsets.symmetric(
         horizontal: isSmallScreen ? 12 : 16,
-        vertical: isSmallScreen ? 6 : 8,
+        vertical: 0, // Remove vertical margin to eliminate space
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
