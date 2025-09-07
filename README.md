@@ -2,14 +2,15 @@
 
 A Flutter application that displays contextual cards fetched from the FamPay API, implementing all required features including deeplink handling, card dismissal, pull-to-refresh, and responsive design.
 
-## 📹 Demo
+## Video
 
-- App walkthrough video (HC1/HC3/HC5/HC6/HC9, pull-to-refresh, deeplinks, HC3 long-press actions):
-  - Google Drive link: <ADD_LINK_HERE>
-  - Backup GIF (short preview): `assets/demo/preview.gif`
-- APK for reviewers: `build/app/outputs/flutter-apk/app-release.apk`
 
-> Tip: If running locally, follow Setup below. The video demonstrates: loading → list render → deeplink taps → HC3 long-press (remind later / dismiss now) → relaunch behavior → pull-to-refresh → HC6 horizontal scroll → HC9 dynamic width.
+
+https://github.com/user-attachments/assets/f861dc17-95c3-4d7d-965c-fc71c3ff1879
+
+
+
+
 
 ## 🚀 Features Implemented
 
@@ -169,8 +170,8 @@ GET https://polyjuice.kong.fampay.co/mock/famapp/feed/home_section/?slugs=famx-p
 ## 🚀 Submission
 
 - **Repository**: Clean commit history and README with setup instructions
-- **APK**: Include `app-release.apk` inside the repo under `build/app/outputs/flutter-apk/`
-- **Recordings**: Add a short screen recording (or the Demo link above)
+- **APK**: Include `app-release.apk` inside the repo in release section
+- **Recordings**: Add a short screen recording 
 - **What reviewers will see**:
   - API-only rendering (no hardcoded user-facing strings)
   - Deeplinks on cards/CTAs/entities
@@ -192,17 +193,6 @@ GET https://polyjuice.kong.fampay.co/mock/famapp/feed/home_section/?slugs=famx-p
 - **Feature Branches**: Organized development workflow
 - **Code Reviews**: Quality assurance process
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is part of the FamPay assignment and is for evaluation purposes only.
 
 ---
 
